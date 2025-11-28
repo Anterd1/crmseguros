@@ -51,25 +51,29 @@ export default async function DashboardPage() {
         .limit(5)
 
     return (
-        <div className="flex flex-col gap-8">
-            <div className="flex items-center justify-between space-y-2">
-                <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+        <div className="flex flex-col gap-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Dashboard</h2>
                 <div className="flex items-center space-x-2">
                     {/* DatePicker or actions could go here */}
                 </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {/* Summary Cards - Grid on desktop, scroll on mobile */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">
                             Pólizas Activas
                         </CardTitle>
-                        <FileText className="h-4 w-4 text-muted-foreground" />
+                        <div className="p-2 bg-primary/10 rounded-full">
+                            <FileText className="h-4 w-4 text-primary" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{activePoliciesCount || 0}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl md:text-3xl font-bold">{activePoliciesCount || 0}</div>
+                        <p className="text-xs text-muted-foreground mt-1">
                             +12% respecto al mes pasado
                         </p>
                     </CardContent>
@@ -79,11 +83,13 @@ export default async function DashboardPage() {
                         <CardTitle className="text-sm font-medium">
                             Renovaciones (30 días)
                         </CardTitle>
-                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <div className="p-2 bg-primary/10 rounded-full">
+                            <TrendingUp className="h-4 w-4 text-primary" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{upcomingExpirations?.length || 0}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl md:text-3xl font-bold">{upcomingExpirations?.length || 0}</div>
+                        <p className="text-xs text-muted-foreground mt-1">
                             {upcomingExpirations?.length || 0} urgentes para este mes
                         </p>
                     </CardContent>
@@ -93,11 +99,13 @@ export default async function DashboardPage() {
                         <CardTitle className="text-sm font-medium">
                             Clientes Totales
                         </CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <div className="p-2 bg-primary/10 rounded-full">
+                            <Users className="h-4 w-4 text-primary" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{totalClientsCount || 0}</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl md:text-3xl font-bold">{totalClientsCount || 0}</div>
+                        <p className="text-xs text-muted-foreground mt-1">
                             +4 nuevos esta semana
                         </p>
                     </CardContent>
@@ -107,60 +115,65 @@ export default async function DashboardPage() {
                         <CardTitle className="text-sm font-medium">
                             Siniestros Activos
                         </CardTitle>
-                        <AlertTriangle className="h-4 w-4 text-red-500" />
+                        <div className="p-2 bg-primary/10 rounded-full">
+                            <AlertTriangle className="h-4 w-4 text-primary" />
+                        </div>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">0</div>
-                        <p className="text-xs text-muted-foreground">
+                        <div className="text-2xl md:text-3xl font-bold">0</div>
+                        <p className="text-xs text-muted-foreground mt-1">
                             No hay siniestros registrados
                         </p>
                     </CardContent>
                 </Card>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                <Card className="col-span-4">
+            {/* Data Cards - Stack on mobile, side by side on desktop */}
+            <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
+                <Card className="lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Pólizas Recientes</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Póliza</TableHead>
-                                    <TableHead>Cliente</TableHead>
-                                    <TableHead>Ramo</TableHead>
-                                    <TableHead>Estado</TableHead>
-                                    <TableHead className="text-right">Prima</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {recentPolicies?.map((policy: any) => (
-                                    <TableRow key={policy.id}>
-                                        <TableCell className="font-medium">{policy.policy_number}</TableCell>
-                                        <TableCell>{policy.clients?.first_name} {policy.clients?.last_name}</TableCell>
-                                        <TableCell>{policy.type}</TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                variant={
-                                                    policy.status === "Activa"
-                                                        ? "default"
-                                                        : policy.status === "En Trámite"
-                                                            ? "secondary"
-                                                            : "outline"
-                                                }
-                                            >
-                                                {policy.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">${policy.amount?.toLocaleString()}</TableCell>
+                        <div className="overflow-x-auto">
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Póliza</TableHead>
+                                        <TableHead>Cliente</TableHead>
+                                        <TableHead>Ramo</TableHead>
+                                        <TableHead>Estado</TableHead>
+                                        <TableHead className="text-right">Prima</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody>
+                                    {recentPolicies?.map((policy: any) => (
+                                        <TableRow key={policy.id}>
+                                            <TableCell className="font-medium">{policy.policy_number}</TableCell>
+                                            <TableCell>{policy.clients?.first_name} {policy.clients?.last_name}</TableCell>
+                                            <TableCell>{policy.type}</TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    variant={
+                                                        policy.status === "Activa"
+                                                            ? "default"
+                                                            : policy.status === "En Trámite"
+                                                                ? "secondary"
+                                                                : "outline"
+                                                    }
+                                                >
+                                                    {policy.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-right">${policy.amount?.toLocaleString()}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </CardContent>
                 </Card>
-                <Card className="col-span-3">
+                <Card className="lg:col-span-3">
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle>Próximos Vencimientos</CardTitle>
                         <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-primary">

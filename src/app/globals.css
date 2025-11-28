@@ -44,14 +44,16 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
+  --radius: 1.5rem;
+  --background: oklch(0.93 0.02 250);
+  /* #F2F4F7 - Light Gray/Blue - Darkened for contrast */
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.3 0.1 260); /* Navy Blue */
+  --primary: oklch(0.3 0.1 260);
+  /* Navy Blue */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -63,11 +65,11 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.3 0.1 260);
-  --chart-1: oklch(0.3 0.1 260); /* Navy Blue */
-  --chart-2: oklch(0.6 0.15 200); /* Cyan/Blue */
-  --chart-3: oklch(0.65 0.2 150); /* Green */
-  --chart-4: oklch(0.7 0.2 50); /* Orange */
-  --chart-5: oklch(0.6 0.2 340); /* Pink/Red */
+  --chart-1: oklch(0.3 0.1 260);
+  --chart-2: oklch(0.6 0.15 200);
+  --chart-3: oklch(0.65 0.2 150);
+  --chart-4: oklch(0.7 0.2 50);
+  --chart-5: oklch(0.6 0.2 340);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.3 0.1 260);
@@ -85,8 +87,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -116,6 +118,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
