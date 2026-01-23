@@ -1,6 +1,6 @@
 "use client"
 
-import { Bell, Search } from "lucide-react"
+import { Bell, Search, LogOut } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -12,12 +12,12 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
 import { MobileNav } from "./MobileNav"
+import { logout } from "@/app/login/actions"
 
 export function Header() {
     return (
-        <header className="flex h-20 items-center gap-4 bg-background px-4 md:px-8">
+        <header className="flex h-20 items-center gap-4 px-6 md:px-10 lg:px-12 bg-transparent">
             <MobileNav />
             <div className="w-full flex-1">
                 <form>
@@ -53,7 +53,13 @@ export function Header() {
                         <DropdownMenuItem className="rounded-lg cursor-pointer">Perfil</DropdownMenuItem>
                         <DropdownMenuItem className="rounded-lg cursor-pointer">Configuración</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-600 rounded-lg cursor-pointer">Cerrar Sesión</DropdownMenuItem>
+                        <DropdownMenuItem
+                            className="text-red-600 rounded-lg cursor-pointer focus:text-red-600 focus:bg-red-50"
+                            onClick={() => logout()}
+                        >
+                            <LogOut className="mr-2 h-4 w-4" />
+                            Cerrar Sesión
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
