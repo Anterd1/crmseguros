@@ -63,28 +63,96 @@ export default async function PoliciesPage() {
                 </div>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <CardTitle>Listado de Pólizas</CardTitle>
-                        <div className="w-full md:w-72">
-                            <SearchInput placeholder="Buscar por cliente, póliza..." />
-                        </div>
+            <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <h3 className="text-lg font-semibold">Listado de Pólizas</h3>
+                    <div className="w-full md:w-72">
+                        <SearchInput placeholder="Buscar por cliente, póliza..." />
                     </div>
-                </CardHeader>
-                <CardContent>
-                    {/* Wrap table in overflow container for mobile */}
-                    <div className="overflow-x-auto">
-                        <Table>
+                </div>
+
+                <div>
+                    {/* Mobile cards */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                        {policies?.length === 0 && (
+                            <div className="text-center text-muted-foreground py-8">
+                                No hay pólizas registradas.
+                            </div>
+                        )}
+                        {policies?.map((policy: any) => (
+                            <div key={policy.id} className="rounded-2xl border bg-white p-4 shadow-sm">
+                                <div className="flex items-start justify-between gap-4">
+                                    <div className="min-w-0">
+                                        <div className="text-xs text-muted-foreground">No. Póliza</div>
+                                        <div className="truncate font-semibold">{policy.policy_number}</div>
+                                    </div>
+                                    <Badge
+                                        variant={
+                                            policy.status === "Activa"
+                                                ? "default"
+                                                : policy.status === "Vencida"
+                                                    ? "destructive"
+                                                    : "secondary"
+                                        }
+                                    >
+                                        {policy.status}
+                                    </Badge>
+                                </div>
+                                <div className="mt-3 grid gap-2 text-sm">
+                                    <div className="truncate">
+                                        <span className="text-muted-foreground">Cliente:</span>{" "}
+                                        {policy.clients?.first_name} {policy.clients?.last_name}
+                                    </div>
+                                    <div className="truncate">
+                                        <span className="text-muted-foreground">Compañía:</span>{" "}
+                                        {policy.company || "-"}
+                                    </div>
+                                    <div className="truncate">
+                                        <span className="text-muted-foreground">Ramo:</span>{" "}
+                                        {policy.type || "-"}
+                                    </div>
+                                    <div className="truncate">
+                                        <span className="text-muted-foreground">Próx. pago:</span>{" "}
+                                        {policy.next_payment_date || "-"}
+                                    </div>
+                                </div>
+                                <div className="mt-4 flex items-center justify-end">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" size="sm">
+                                                Acciones
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                                            <DropdownMenuItem asChild>
+                                                <Link href={`/dashboard/policies/${policy.id}`}>Ver Detalles</Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem asChild>
+                                                <Link href={`/dashboard/policies/${policy.id}/edit`}>Editar</Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem asChild>
+                                                <Link href={`/dashboard/policies/${policy.id}/renew`}>Renovar</Link>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Desktop table */}
+                    <div className="hidden w-full overflow-x-auto md:block">
+                        <Table className="min-w-[720px]">
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>No. Póliza</TableHead>
                                     <TableHead>Cliente</TableHead>
-                                    <TableHead>Compañía</TableHead>
-                                    <TableHead>Ramo</TableHead>
-                                    <TableHead>Mes Contrato</TableHead>
-                                    <TableHead>Frecuencia</TableHead>
-                                    <TableHead>Próx. Pago</TableHead>
+                                    <TableHead className="hidden lg:table-cell">Compañía</TableHead>
+                                    <TableHead className="hidden lg:table-cell">Ramo</TableHead>
+                                    <TableHead className="hidden xl:table-cell">Mes Contrato</TableHead>
+                                    <TableHead className="hidden xl:table-cell">Frecuencia</TableHead>
+                                    <TableHead className="hidden xl:table-cell">Próx. Pago</TableHead>
                                     <TableHead>Estado</TableHead>
                                     <TableHead className="text-right">Acciones</TableHead>
                                 </TableRow>
@@ -101,11 +169,11 @@ export default async function PoliciesPage() {
                                     <TableRow key={policy.id}>
                                         <TableCell className="font-medium">{policy.policy_number}</TableCell>
                                         <TableCell>{policy.clients?.first_name} {policy.clients?.last_name}</TableCell>
-                                        <TableCell>{policy.company || '-'}</TableCell>
-                                        <TableCell>{policy.type}</TableCell>
-                                        <TableCell>{policy.contract_month || '-'}</TableCell>
-                                        <TableCell>{policy.payment_frequency || '-'}</TableCell>
-                                        <TableCell>{policy.next_payment_date || '-'}</TableCell>
+                                        <TableCell className="hidden lg:table-cell">{policy.company || '-'}</TableCell>
+                                        <TableCell className="hidden lg:table-cell">{policy.type}</TableCell>
+                                        <TableCell className="hidden xl:table-cell">{policy.contract_month || '-'}</TableCell>
+                                        <TableCell className="hidden xl:table-cell">{policy.payment_frequency || '-'}</TableCell>
+                                        <TableCell className="hidden xl:table-cell">{policy.next_payment_date || '-'}</TableCell>
                                         <TableCell>
                                             <Badge
                                                 variant={
@@ -146,8 +214,8 @@ export default async function PoliciesPage() {
                             </TableBody>
                         </Table>
                     </div>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     )
 }
