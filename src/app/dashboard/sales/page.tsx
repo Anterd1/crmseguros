@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, TrendingUp, Users, DollarSign, Target } from "lucide-react"
+import { Plus, Users, DollarSign, Target, TrendingUp } from "lucide-react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
-import { Badge } from "@/components/ui/badge"
+import { KanbanBoard } from "@/components/sales/kanban-board"
 
 export default async function SalesPage() {
     const supabase = await createClient()
     
-    // Fetch prospects grouped by status
+    // Fetch all prospects
     const { data: prospects } = await supabase
         .from('prospects')
         .select('*')
@@ -23,15 +23,6 @@ export default async function SalesPage() {
     const activeProspects = prospects?.filter(p => !['Ganado', 'Perdido'].includes(p.status)).length || 0
     const wonProspects = prospects?.filter(p => p.status === 'Ganado').length || 0
     const totalQuoted = quotations?.reduce((sum, q) => sum + (q.premium_amount || 0), 0) || 0
-
-    // Group by status for pipeline
-    const pipeline = {
-        'Nuevo': prospects?.filter(p => p.status === 'Nuevo') || [],
-        'Contactado': prospects?.filter(p => p.status === 'Contactado') || [],
-        'Cotización': prospects?.filter(p => p.status === 'Cotización') || [],
-        'Negociación': prospects?.filter(p => p.status === 'Negociación') || [],
-        'Ganado': prospects?.filter(p => p.status === 'Ganado') || [],
-    }
 
     return (
         <div className="flex flex-col gap-6">
@@ -70,7 +61,7 @@ export default async function SalesPage() {
                     <CardContent>
                         <div className="text-2xl font-bold">{wonProspects}</div>
                         <p className="text-xs text-muted-foreground">
-                            {totalProspects > 0 ? Math.round((wonProspects / totalProspects) * 100) : 0}% tasa de conversión
+                            {totalProspects > 0 ? Math.round((wonProspects / totalProspects) * 100) : 0}% conversión
                         </p>
                     </CardContent>
                 </Card>
@@ -96,44 +87,9 @@ export default async function SalesPage() {
                 </Card>
             </div>
 
-            {/* Sales Pipeline (Kanban-style) */}
-            <div className="grid gap-4 md:grid-cols-5">
-                {Object.entries(pipeline).map(([status, items]) => (
-                    <Card key={status}>
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-sm font-medium flex items-center justify-between">
-                                {status}
-                                <Badge variant="secondary">{items.length}</Badge>
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            {items.map((prospect: any) => (
-                                <Link
-                                    key={prospect.id}
-                                    href={`/dashboard/sales/${prospect.id}`}
-                                    className="block p-3 rounded-lg border bg-card hover:bg-accent transition-colors"
-                                >
-                                    <p className="font-medium text-sm">
-                                        {prospect.first_name} {prospect.last_name}
-                                    </p>
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                        {prospect.interested_in?.join(', ') || 'Sin especificar'}
-                                    </p>
-                                    {prospect.priority === 'Alta' && (
-                                        <Badge variant="destructive" className="mt-2 text-xs">
-                                            Alta prioridad
-                                        </Badge>
-                                    )}
-                                </Link>
-                            ))}
-                            {items.length === 0 && (
-                                <p className="text-xs text-muted-foreground text-center py-4">
-                                    Sin prospectos
-                                </p>
-                            )}
-                        </CardContent>
-                    </Card>
-                ))}
+            {/* Kanban Board */}
+            <div className="min-h-[600px] rounded-xl border bg-muted/10 p-4 overflow-hidden">
+                <KanbanBoard initialProspects={prospects || []} />
             </div>
         </div>
     )

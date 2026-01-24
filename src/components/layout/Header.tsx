@@ -17,7 +17,7 @@ import { logout } from "@/app/login/actions"
 
 export function Header() {
     return (
-        <header className="flex h-20 items-center gap-4 px-6 md:px-10 lg:px-12 bg-transparent">
+        <header className="flex h-20 items-center gap-4 px-6 lg:px-10 bg-transparent shrink-0">
             <MobileNav />
             <div className="w-full flex-1">
                 <form>
