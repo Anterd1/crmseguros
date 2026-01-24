@@ -38,22 +38,23 @@ export default async function PaymentsPage() {
         .order('due_date', { ascending: true })
 
     return (
-        <div className="flex flex-col gap-8">
-            <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-6">
+            {/* Header - Responsive */}
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Cobranza</h2>
-                    <p className="text-muted-foreground">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Cobranza</h2>
+                    <p className="text-sm md:text-base text-muted-foreground">
                         Control de pagos y comisiones.
                     </p>
                 </div>
                 <div className="flex gap-2">
-                    <Button variant="outline">
+                    <Button variant="outline" className="flex-1 md:flex-none">
                         <Filter className="mr-2 h-4 w-4" />
-                        Filtrar
+                        <span className="hidden sm:inline">Filtrar</span>
                     </Button>
-                    <Button variant="outline">
+                    <Button variant="outline" className="flex-1 md:flex-none">
                         <Download className="mr-2 h-4 w-4" />
-                        Exportar
+                        <span className="hidden sm:inline">Exportar</span>
                     </Button>
                 </div>
             </div>
@@ -63,54 +64,57 @@ export default async function PaymentsPage() {
                     <CardTitle>Próximos Cobros</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Póliza</TableHead>
-                                <TableHead>Cliente</TableHead>
-                                <TableHead>Concepto</TableHead>
-                                <TableHead>Monto</TableHead>
-                                <TableHead>Vencimiento</TableHead>
-                                <TableHead>Estado</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {payments?.length === 0 && (
+                    {/* Wrap table in overflow container for mobile */}
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
-                                        No hay cobros registrados.
-                                    </TableCell>
+                                    <TableHead>Póliza</TableHead>
+                                    <TableHead>Cliente</TableHead>
+                                    <TableHead>Concepto</TableHead>
+                                    <TableHead>Monto</TableHead>
+                                    <TableHead>Vencimiento</TableHead>
+                                    <TableHead>Estado</TableHead>
                                 </TableRow>
-                            )}
-                            {payments?.map((payment: any) => (
-                                <TableRow key={payment.id}>
-                                    <TableCell className="font-medium">
-                                        {payment.policies?.policy_number || 'Sin Póliza'}
-                                    </TableCell>
-                                    <TableCell>
-                                        {payment.policies?.clients?.first_name} {payment.policies?.clients?.last_name}
-                                    </TableCell>
-                                    <TableCell>{payment.concept}</TableCell>
-                                    <TableCell>${payment.amount}</TableCell>
-                                    <TableCell>{payment.due_date}</TableCell>
-                                    <TableCell>
-                                        <Badge
-                                            variant={
-                                                payment.status === "Pagado"
-                                                    ? "default"
-                                                    : payment.status === "Atrasado"
-                                                        ? "destructive"
-                                                        : "secondary"
-                                            }
-                                            className={payment.status === "Pagado" ? "bg-green-600 hover:bg-green-700" : ""}
-                                        >
-                                            {payment.status}
-                                        </Badge>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {payments?.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                                            No hay cobros registrados.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                                {payments?.map((payment: any) => (
+                                    <TableRow key={payment.id}>
+                                        <TableCell className="font-medium">
+                                            {payment.policies?.policy_number || 'Sin Póliza'}
+                                        </TableCell>
+                                        <TableCell>
+                                            {payment.policies?.clients?.first_name} {payment.policies?.clients?.last_name}
+                                        </TableCell>
+                                        <TableCell>{payment.concept}</TableCell>
+                                        <TableCell>${payment.amount}</TableCell>
+                                        <TableCell>{payment.due_date}</TableCell>
+                                        <TableCell>
+                                            <Badge
+                                                variant={
+                                                    payment.status === "Pagado"
+                                                        ? "default"
+                                                        : payment.status === "Atrasado"
+                                                            ? "destructive"
+                                                            : "secondary"
+                                                }
+                                                className={payment.status === "Pagado" ? "bg-green-600 hover:bg-green-700" : ""}
+                                            >
+                                                {payment.status}
+                                            </Badge>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </CardContent>
             </Card>
         </div>

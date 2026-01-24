@@ -28,6 +28,7 @@ import {
 
 import { createClient } from "@/lib/supabase/server"
 import { ImportPolicyModal } from "@/components/policies/import-modal"
+import { SearchInput } from "@/components/search-input"
 
 export default async function PoliciesPage() {
     const supabase = await createClient()
@@ -66,13 +67,8 @@ export default async function PoliciesPage() {
                 <CardHeader>
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <CardTitle>Listado de Pólizas</CardTitle>
-                        <div className="relative w-full md:w-72">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Buscar por cliente, póliza..."
-                                className="pl-8"
-                            />
+                        <div className="w-full md:w-72">
+                            <SearchInput placeholder="Buscar por cliente, póliza..." />
                         </div>
                     </div>
                 </CardHeader>
@@ -133,9 +129,15 @@ export default async function PoliciesPage() {
                                                 </DropdownMenuTrigger>
                                                 <DropdownMenuContent align="end">
                                                     <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                    <DropdownMenuItem>Ver Detalles</DropdownMenuItem>
-                                                    <DropdownMenuItem>Editar</DropdownMenuItem>
-                                                    <DropdownMenuItem>Renovar</DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/dashboard/policies/${policy.id}`}>Ver Detalles</Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/dashboard/policies/${policy.id}/edit`}>Editar</Link>
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem asChild>
+                                                        <Link href={`/dashboard/policies/${policy.id}/renew`}>Renovar</Link>
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>

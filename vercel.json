@@ -1,0 +1,20 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/update-policy-status",
+      "schedule": "0 0 * * *"
+    },
+    {
+      "path": "/api/cron/generate-payments",
+      "schedule": "0 2 1 * *"
+    },
+    {
+      "path": "/api/cron/send-renewal-reminders",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/generate-commissions",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

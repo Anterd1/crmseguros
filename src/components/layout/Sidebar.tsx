@@ -12,15 +12,26 @@ import {
   BarChart3,
   Settings,
   LogOut,
-  Shield
+  Shield,
+  Briefcase,
+  LifeBuoy,
+  TrendingUp,
+  DollarSign,
+  FolderOpen
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { logout } from "@/app/login/actions"
 
 export const sidebarItems = [
   {
     title: "Dashboard",
     href: "/dashboard",
     icon: LayoutDashboard,
+  },
+  {
+    title: "Ventas",
+    href: "/dashboard/sales",
+    icon: TrendingUp,
   },
   {
     title: "Pólizas",
@@ -46,6 +57,26 @@ export const sidebarItems = [
     title: "Reportes",
     href: "/dashboard/reports",
     icon: BarChart3,
+  },
+  {
+    title: "Comisiones",
+    href: "/dashboard/commissions",
+    icon: DollarSign,
+  },
+  {
+    title: "Documentos",
+    href: "/dashboard/documents",
+    icon: FolderOpen,
+  },
+  {
+    title: "Subagentes",
+    href: "/dashboard/subagents",
+    icon: Briefcase,
+  },
+  {
+    title: "Soporte",
+    href: "/dashboard/support",
+    icon: LifeBuoy,
   },
 ]
 
@@ -88,7 +119,11 @@ export function Sidebar() {
             <Settings className="h-5 w-5" />
             Configuración
           </Link>
-          <Button variant="ghost" className="justify-start gap-4 px-4 py-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+          <Button
+            variant="ghost"
+            className="justify-start gap-4 px-4 py-6 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            onClick={() => logout()}
+          >
             <LogOut className="h-5 w-5" />
             Cerrar Sesión
           </Button>

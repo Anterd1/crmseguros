@@ -48,18 +48,19 @@ const formSchema = z.object({
             netPremium: z.coerce.number().min(0),
             taxAmount: z.coerce.number().min(0),
             totalPremium: z.coerce.number().min(0),
-            currency: z.enum(["MXN", "USD", "EUR"]),
+            currency: z.enum(["MXN", "USD", "EUR", "UDIS"]),
         }),
     }),
 })
 
 interface ReviewFormProps {
     initialData: ExtractedData;
+    fileInfo?: { buffer: Buffer; fileName: string; fileType: string } | null;
     onCancel: () => void;
     onSuccess: () => void;
 }
 
-export function ReviewForm({ initialData, onCancel, onSuccess }: ReviewFormProps) {
+export function ReviewForm({ initialData, fileInfo, onCancel, onSuccess }: ReviewFormProps) {
     const [isSaving, setIsSaving] = useState(false);
     const [showDebug, setShowDebug] = useState(false);
 
@@ -95,15 +96,25 @@ export function ReviewForm({ initialData, onCancel, onSuccess }: ReviewFormProps
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsSaving(true);
         try {
-            // Map form values back to strict domain types if needed, zod handles most
-            const result = await savePolicy(values as any); 
+            console.log("=== SUBMITTING POLICY ===");
+            console.log(JSON.stringify(values, null, 2));
+            
+            const result = await savePolicy({
+                ...values,
+                pdfFile: fileInfo
+            } as any); 
+            
+            console.log("=== SAVE RESULT ===");
+            console.log(result);
+            
             if (result.success) {
                 onSuccess();
             } else {
+                console.error("Save failed:", result.error);
                 alert("Error al guardar: " + result.error);
             }
         } catch (e) {
-            console.error(e);
+            console.error("Submit error:", e);
             alert("Error desconocido al guardar");
         } finally {
             setIsSaving(false);

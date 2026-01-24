@@ -33,18 +33,20 @@ export default async function ClaimsPage() {
     ) || []
 
     return (
-        <div className="flex flex-col gap-8">
-            <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-6">
+            {/* Header - Responsive */}
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Siniestros</h2>
-                    <p className="text-muted-foreground">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Siniestros</h2>
+                    <p className="text-sm md:text-base text-muted-foreground">
                         Seguimiento de incidentes y reclamaciones.
                     </p>
                 </div>
                 <Button variant="destructive" asChild>
                     <Link href="/dashboard/claims/new">
                         <Plus className="mr-2 h-4 w-4" />
-                        Reportar Siniestro
+                        <span className="hidden sm:inline">Reportar Siniestro</span>
+                        <span className="sm:hidden">Reportar</span>
                     </Link>
                 </Button>
             </div>
@@ -69,45 +71,48 @@ export default async function ClaimsPage() {
                     <CardTitle>Bitácora de Siniestros</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>No. Siniestro</TableHead>
-                                <TableHead>Tipo</TableHead>
-                                <TableHead>Fecha</TableHead>
-                                <TableHead>Estatus</TableHead>
-                                <TableHead className="text-right">Acciones</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {claims?.length === 0 && (
+                    {/* Wrap table in overflow container for mobile */}
+                    <div className="overflow-x-auto">
+                        <Table>
+                            <TableHeader>
                                 <TableRow>
-                                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                                        No hay siniestros registrados.
-                                    </TableCell>
+                                    <TableHead>No. Siniestro</TableHead>
+                                    <TableHead>Tipo</TableHead>
+                                    <TableHead>Fecha</TableHead>
+                                    <TableHead>Estatus</TableHead>
+                                    <TableHead className="text-right">Acciones</TableHead>
                                 </TableRow>
-                            )}
-                            {claims?.map((claim) => (
-                                <TableRow key={claim.id}>
-                                    <TableCell className="font-medium">{claim.claim_number}</TableCell>
-                                    <TableCell>{claim.type}</TableCell>
-                                    <TableCell>{claim.incident_date}</TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className={
-                                            claim.status === 'Abierto' ? "border-red-500 text-red-600" :
-                                                claim.status === 'En Proceso' ? "border-orange-500 text-orange-600" :
-                                                    "border-green-500 text-green-600"
-                                        }>
-                                            {claim.status}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <Button variant="ghost" size="sm">Ver Detalle</Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
+                            </TableHeader>
+                            <TableBody>
+                                {claims?.length === 0 && (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                                            No hay siniestros registrados.
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                                {claims?.map((claim) => (
+                                    <TableRow key={claim.id}>
+                                        <TableCell className="font-medium">{claim.claim_number}</TableCell>
+                                        <TableCell>{claim.type}</TableCell>
+                                        <TableCell>{claim.incident_date}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className={
+                                                claim.status === 'Abierto' ? "border-red-500 text-red-600" :
+                                                    claim.status === 'En Proceso' ? "border-orange-500 text-orange-600" :
+                                                        "border-green-500 text-green-600"
+                                            }>
+                                                {claim.status}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-right">
+                                            <Button variant="ghost" size="sm">Ver Detalle</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </CardContent>
             </Card>
         </div>

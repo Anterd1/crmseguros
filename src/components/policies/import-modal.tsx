@@ -22,6 +22,7 @@ export function ImportPolicyModal() {
     const [step, setStep] = useState<"upload" | "review">("upload")
     const [isExtracting, setIsExtracting] = useState(false)
     const [extractedData, setExtractedData] = useState<ExtractedData | null>(null)
+    const [fileInfo, setFileInfo] = useState<{ buffer: Buffer; fileName: string; fileType: string } | null>(null)
     const [error, setError] = useState<string | null>(null)
 
     const onDrop = async (acceptedFiles: File[]) => {
@@ -39,6 +40,7 @@ export function ImportPolicyModal() {
 
             if (result.success && result.data) {
                 setExtractedData(result.data);
+                setFileInfo(result.fileInfo || null);
                 setStep("review");
             } else {
                 setError(result.error || "Error al procesar el archivo");
@@ -62,6 +64,7 @@ export function ImportPolicyModal() {
     const reset = () => {
         setStep("upload");
         setExtractedData(null);
+        setFileInfo(null);
         setError(null);
     }
 
@@ -134,7 +137,8 @@ export function ImportPolicyModal() {
 
                 {step === "review" && extractedData && (
                     <ReviewForm 
-                        initialData={extractedData} 
+                        initialData={extractedData}
+                        fileInfo={fileInfo}
                         onCancel={() => setStep("upload")}
                         onSuccess={handleSuccess}
                     />

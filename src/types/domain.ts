@@ -31,7 +31,7 @@ export interface FinancialData {
     issuanceFee?: number; // Gastos de Expedición
     otherFees?: number; // Otros
     totalPremium: number; // Prima Total
-    currency: "MXN" | "USD" | "EUR";
+    currency: "MXN" | "USD" | "EUR" | "UDIS";
 }
 
 export interface Policy {
