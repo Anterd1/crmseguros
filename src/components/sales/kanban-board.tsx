@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,13 +20,16 @@ export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
     const [activeId, setActiveId] = useState<string | null>(null)
     const [mounted, setMounted] = useState(false)
     const router = useRouter()
+    const ignoreUpdateRef = useRef(false)
 
     useEffect(() => {
         setMounted(true)
     }, [])
 
     useEffect(() => {
-        setProspects(initialProspects)
+        if (!ignoreUpdateRef.current) {
+            setProspects(initialProspects)
+        }
     }, [initialProspects])
 
     const sensors = useSensors(
@@ -61,6 +64,9 @@ export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
             )
         )
 
+        // Block external updates temporarily to prevent flickering
+        ignoreUpdateRef.current = true
+
         // Update in database via Server Action
         try {
             const result = await updateProspectStatus(prospectId, newStatus)
@@ -69,11 +75,17 @@ export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
                 throw new Error(result.error)
             }
 
-            router.refresh()
+            // Allow updates again and refresh to sync everything
+            setTimeout(() => {
+                ignoreUpdateRef.current = false
+                router.refresh()
+            }, 500) // Small delay to ensure server has processed consistency if needed
+            
         } catch (error) {
             console.error('Error updating prospect:', error)
             // Revert optimistic update on error
             setProspects(initialProspects)
+            ignoreUpdateRef.current = false
         }
 
         setActiveId(null)
@@ -85,8 +97,11 @@ export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
 
     const activeProspect = prospects.find(p => p.id === activeId)
 
+    if (!mounted) return null
+
     return (
         <DndContext
+            id="kanban-board"
             sensors={sensors}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
