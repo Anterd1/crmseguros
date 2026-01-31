@@ -132,14 +132,14 @@ export default async function PoliciesPage() {
 
                     {/* Desktop table */}
                     <div className="hidden overflow-x-auto rounded-2xl border bg-white shadow-sm md:block">
-                        <div className="min-w-[600px] lg:min-w-0">
+                        <div>
                         <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>No. Póliza</TableHead>
                                     <TableHead>Cliente</TableHead>
-                                    <TableHead className="hidden lg:table-cell">Compañía</TableHead>
-                                    <TableHead className="hidden lg:table-cell">Ramo</TableHead>
+                                    <TableHead>Compañía</TableHead>
+                                    <TableHead>Ramo</TableHead>
                                     <TableHead className="hidden xl:table-cell">Mes Contrato</TableHead>
                                     <TableHead className="hidden xl:table-cell">Frecuencia</TableHead>
                                     <TableHead className="hidden xl:table-cell">Próx. Pago</TableHead>
@@ -159,8 +159,8 @@ export default async function PoliciesPage() {
                                     <TableRow key={policy.id}>
                                         <TableCell className="font-medium">{policy.policy_number}</TableCell>
                                         <TableCell>{policy.clients?.first_name} {policy.clients?.last_name}</TableCell>
-                                        <TableCell className="hidden lg:table-cell">{policy.company || '-'}</TableCell>
-                                        <TableCell className="hidden lg:table-cell">{policy.type}</TableCell>
+                                        <TableCell>{policy.company || '-'}</TableCell>
+                                        <TableCell>{policy.type}</TableCell>
                                         <TableCell className="hidden xl:table-cell">{policy.contract_month || '-'}</TableCell>
                                         <TableCell className="hidden xl:table-cell">{policy.payment_frequency || '-'}</TableCell>
                                         <TableCell className="hidden xl:table-cell">{policy.next_payment_date || '-'}</TableCell>
