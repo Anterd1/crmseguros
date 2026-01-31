@@ -31,7 +31,7 @@ export function SearchBar({ placeholder = "Buscar...", paramName = "q" }: Search
       <Input
         type="search"
         placeholder={placeholder}
-        className="pl-8"
+        className="pl-8 text-sm h-9 sm:h-10"
         defaultValue={searchParams.get(paramName)?.toString()}
         onChange={(e) => handleSearch(e.target.value)}
       />

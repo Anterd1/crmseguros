@@ -128,9 +128,26 @@ body {
   overflow-x: hidden;
 }
 
-/* Custom scrollbar for kanban horizontal scroll */
+/* Touch targets mínimos para móvil */
+@layer utilities {
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  .touch-target-sm {
+    @apply min-h-[36px] min-w-[36px];
+  }
+}
+
+/* Custom scrollbar responsive */
 .overflow-x-auto::-webkit-scrollbar {
-  height: 8px;
+  height: 6px;
+}
+
+@media (min-width: 768px) {
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 8px;
+  }
 }
 
 .overflow-x-auto::-webkit-scrollbar-track {

@@ -132,7 +132,7 @@ export default async function PoliciesPage() {
 
                     {/* Desktop table */}
                     <div className="hidden overflow-x-auto rounded-2xl border bg-white shadow-sm md:block">
-                        <div className="min-w-[720px]">
+                        <div className="min-w-[600px] lg:min-w-0">
                         <Table>
                             <TableHeader>
                                 <TableRow>

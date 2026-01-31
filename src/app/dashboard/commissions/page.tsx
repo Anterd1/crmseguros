@@ -15,6 +15,7 @@ import { PageHeader } from "@/components/molecules/page-header"
 import { StatsCard } from "@/components/molecules/stats-card"
 import { StatusBadge } from "@/components/molecules/status-badge"
 import { formatCurrency, formatDate } from "@/lib/utils/formatters"
+import { MobileCard } from "@/components/molecules/mobile-card"
 
 export default async function CommissionsPage() {
     const supabase = await createClient()
@@ -63,7 +64,36 @@ export default async function CommissionsPage() {
                     <CardTitle>Detalle de Comisiones</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <div className="overflow-x-auto">
+                    {/* Vista móvil con cards */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                        {!commissions || commissions.length === 0 ? (
+                            <p className="text-center text-muted-foreground py-8 text-sm">
+                                No hay comisiones registradas
+                            </p>
+                        ) : (
+                            commissions.map((commission: any) => (
+                                <MobileCard
+                                    key={commission.id}
+                                    title={commission.policies?.policy_number || '-'}
+                                    badge={<StatusBadge status={commission.status} type="commission" />}
+                                    fields={[
+                                        { label: "Cliente", value: `${commission.policies?.clients?.first_name} ${commission.policies?.clients?.last_name}` },
+                                        { label: "Tipo", value: commission.policies?.type },
+                                        { label: "Prima", value: formatCurrency(commission.base_amount) },
+                                        { 
+                                            label: "Comisión", 
+                                            value: `${commission.commission_percentage}% = ${formatCurrency(commission.commission_amount)}`,
+                                            className: "font-semibold"
+                                        },
+                                        { label: "Fecha pago", value: formatDate(commission.paid_date) },
+                                    ]}
+                                />
+                            ))
+                        )}
+                    </div>
+
+                    {/* Vista desktop con tabla */}
+                    <div className="hidden md:block overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>

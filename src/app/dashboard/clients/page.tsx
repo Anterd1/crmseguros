@@ -21,6 +21,9 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
 import { SearchBar } from "@/components/molecules/search-bar"
 import { PageHeader } from "@/components/molecules/page-header"
+import { MobileCard } from "@/components/molecules/mobile-card"
+import { Badge } from "@/components/ui/badge"
+import { formatDate } from "@/lib/utils/formatters"
 
 export default async function ClientsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -85,8 +88,36 @@ export default async function ClientsPage(props: {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {/* Wrap table in overflow container for mobile */}
-                    <div className="overflow-x-auto">
+                    {/* Vista móvil con cards */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                        {clients?.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8 text-sm">
+                                No hay clientes registrados.
+                            </p>
+                        )}
+                        {clients?.map((client: any) => (
+                            <MobileCard
+                                key={client.id}
+                                title={`${client.first_name} ${client.last_name}`}
+                                badge={<Badge variant="secondary" className="text-xs">{client.client_type}</Badge>}
+                                fields={[
+                                    { label: "RFC", value: client.rfc || "-" },
+                                    { label: "Email", value: client.email || "-" },
+                                    { label: "Teléfono", value: client.phone || "-" },
+                                    { label: "Pólizas", value: `${client.policies?.[0]?.count || 0} activas` },
+                                    { label: "Registro", value: formatDate(client.created_at) },
+                                ]}
+                                actions={
+                                    <Button variant="outline" size="sm" asChild>
+                                        <Link href={`/dashboard/clients/${client.id}`}>Ver Perfil</Link>
+                                    </Button>
+                                }
+                            />
+                        ))}
+                    </div>
+
+                    {/* Vista desktop con tabla */}
+                    <div className="hidden md:block overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>

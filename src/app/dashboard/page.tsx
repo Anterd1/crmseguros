@@ -15,8 +15,9 @@ import { DashboardFilter } from "@/components/dashboard/DashboardFilter"
 import { StatsCard } from "@/components/molecules/stats-card"
 import { ExpirationCard } from "@/components/molecules/expiration-card"
 import { getDashboardStats, getExpiringPolicies } from "./actions"
-import { calculateDaysUntil } from "@/lib/utils/formatters"
+import { calculateDaysUntil, formatCurrency } from "@/lib/utils/formatters"
 import Link from "next/link"
+import { MobileCard } from "@/components/molecules/mobile-card"
 
 export default async function DashboardPage({
     searchParams,
@@ -73,7 +74,7 @@ export default async function DashboardPage({
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Pólizas Activas with Breakdown */}
                 <Card className="md:col-span-2 lg:col-span-2">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -153,7 +154,31 @@ export default async function DashboardPage({
                         <CardTitle>Pólizas Recientes</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="overflow-x-auto">
+                        {/* Vista móvil con cards */}
+                        <div className="flex flex-col gap-3 md:hidden">
+                            {!recentPolicies || recentPolicies.length === 0 ? (
+                                <p className="text-center text-muted-foreground py-4 text-sm">
+                                    No hay pólizas recientes
+                                </p>
+                            ) : (
+                                recentPolicies.map((policy: any) => (
+                                    <Link key={policy.id} href={`/dashboard/policies/${policy.id}`}>
+                                        <MobileCard
+                                            title={policy.policy_number}
+                                            badge={<StatusBadge status={policy.status} type="policy" />}
+                                            fields={[
+                                                { label: "Cliente", value: `${policy.clients?.first_name} ${policy.clients?.last_name}` },
+                                                { label: "Tipo", value: policy.type },
+                                                { label: "Prima", value: formatCurrency(policy.amount) },
+                                            ]}
+                                        />
+                                    </Link>
+                                ))
+                            )}
+                        </div>
+
+                        {/* Vista desktop con tabla */}
+                        <div className="hidden md:block overflow-x-auto">
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -171,19 +196,9 @@ export default async function DashboardPage({
                                             <TableCell>{policy.clients?.first_name} {policy.clients?.last_name}</TableCell>
                                             <TableCell>{policy.type}</TableCell>
                                             <TableCell>
-                                                <Badge
-                                                    variant={
-                                                        policy.status === "Activa"
-                                                            ? "default"
-                                                            : policy.status === "En Trámite"
-                                                                ? "secondary"
-                                                                : "outline"
-                                                    }
-                                                >
-                                                    {policy.status}
-                                                </Badge>
+                                                <StatusBadge status={policy.status} type="policy" />
                                             </TableCell>
-                                            <TableCell className="text-right">${policy.amount?.toLocaleString()}</TableCell>
+                                            <TableCell className="text-right">{formatCurrency(policy.amount)}</TableCell>
                                         </TableRow>
                                     ))}
                                 </TableBody>

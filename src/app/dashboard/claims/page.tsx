@@ -20,6 +20,7 @@ import { createClient } from "@/lib/supabase/server"
 import { PageHeader } from "@/components/molecules/page-header"
 import { StatusBadge } from "@/components/molecules/status-badge"
 import { formatDate, formatCurrency } from "@/lib/utils/formatters"
+import { MobileCard } from "@/components/molecules/mobile-card"
 
 export default async function ClaimsPage() {
     const supabase = await createClient()
@@ -51,7 +52,7 @@ export default async function ClaimsPage() {
                 }
             />
 
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
                 <Card className="bg-red-50 border-red-200">
                     <CardHeader className="pb-2">
                         <CardTitle className="text-red-600 flex items-center gap-2">
@@ -71,8 +72,33 @@ export default async function ClaimsPage() {
                     <CardTitle>Bitácora de Siniestros</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* Wrap table in overflow container for mobile */}
-                    <div className="overflow-x-auto">
+                    {/* Vista móvil con cards */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                        {claims?.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8 text-sm">
+                                No hay siniestros registrados.
+                            </p>
+                        )}
+                        {claims?.map((claim: any) => (
+                            <MobileCard
+                                key={claim.id}
+                                title={claim.claim_number}
+                                badge={<StatusBadge status={claim.status} type="claim" />}
+                                fields={[
+                                    { label: "Tipo", value: claim.type },
+                                    { label: "Fecha incidente", value: formatDate(claim.incident_date) },
+                                ]}
+                                actions={
+                                    <Button variant="ghost" size="sm" asChild>
+                                        <Link href={`/dashboard/claims/${claim.id}`}>Ver Detalle</Link>
+                                    </Button>
+                                }
+                            />
+                        ))}
+                    </div>
+
+                    {/* Vista desktop con tabla */}
+                    <div className="hidden md:block overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>

@@ -35,7 +35,8 @@ export default async function SalesPage() {
                     <Button asChild>
                         <Link href="/dashboard/sales/new">
                             <Plus className="mr-2 h-4 w-4" />
-                            Nuevo Prospecto
+                            <span className="hidden sm:inline">Nuevo Prospecto</span>
+                            <span className="sm:hidden">Nuevo</span>
                         </Link>
                     </Button>
                 }

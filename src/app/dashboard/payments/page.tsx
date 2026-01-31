@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/server"
 import { PageHeader } from "@/components/molecules/page-header"
 import { StatusBadge } from "@/components/molecules/status-badge"
 import { formatDate, formatCurrency } from "@/lib/utils/formatters"
+import { MobileCard } from "@/components/molecules/mobile-card"
 
 export default async function PaymentsPage() {
     const supabase = await createClient()
@@ -64,8 +65,30 @@ export default async function PaymentsPage() {
                     <CardTitle>Próximos Cobros</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    {/* Wrap table in overflow container for mobile */}
-                    <div className="overflow-x-auto">
+                    {/* Vista móvil con cards */}
+                    <div className="flex flex-col gap-4 md:hidden">
+                        {payments?.length === 0 && (
+                            <p className="text-center text-muted-foreground py-8 text-sm">
+                                No hay cobros registrados.
+                            </p>
+                        )}
+                        {payments?.map((payment: any) => (
+                            <MobileCard
+                                key={payment.id}
+                                title={payment.policies?.policy_number || 'Sin Póliza'}
+                                badge={<StatusBadge status={payment.status} type="payment" />}
+                                fields={[
+                                    { label: "Cliente", value: `${payment.policies?.clients?.first_name} ${payment.policies?.clients?.last_name}` },
+                                    { label: "Concepto", value: payment.concept },
+                                    { label: "Monto", value: formatCurrency(payment.amount), className: "font-semibold" },
+                                    { label: "Vencimiento", value: formatDate(payment.due_date) },
+                                ]}
+                            />
+                        ))}
+                    </div>
+
+                    {/* Vista desktop con tabla */}
+                    <div className="hidden md:block overflow-x-auto">
                         <Table>
                             <TableHeader>
                                 <TableRow>
