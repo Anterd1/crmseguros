@@ -58,13 +58,16 @@ export default function NewProspectPage() {
                 stage: 'Contacto inicial'
             })
 
-            if (error) throw error
+            if (error) {
+                console.error('Supabase error:', error)
+                throw error
+            }
 
             router.push('/dashboard/sales')
             router.refresh()
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error creating prospect:', error)
-            alert('Error al crear el prospecto')
+            alert(`Error al crear el prospecto: ${error.message || JSON.stringify(error)}`)
         } finally {
             setLoading(false)
         }

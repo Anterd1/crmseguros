@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DndContext, DragEndEvent, DragOverlay, DragStartEvent, PointerSensor, useSensor, useSensors } from "@dnd-kit/core"
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -18,7 +18,16 @@ interface KanbanBoardProps {
 export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
     const [prospects, setProspects] = useState(initialProspects)
     const [activeId, setActiveId] = useState<string | null>(null)
+    const [mounted, setMounted] = useState(false)
     const router = useRouter()
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    useEffect(() => {
+        setProspects(initialProspects)
+    }, [initialProspects])
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
