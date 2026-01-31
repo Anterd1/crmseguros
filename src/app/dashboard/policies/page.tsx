@@ -119,84 +119,86 @@ export default async function PoliciesPage() {
                     </div>
 
                     {/* Vista desktop con tabla */}
-                    <div className="hidden md:block overflow-x-auto -mx-6 px-6 pb-2">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>No. Póliza</TableHead>
-                                    <TableHead>Cliente</TableHead>
-                                    <TableHead>Compañía</TableHead>
-                                    <TableHead>Ramo</TableHead>
-                                    <TableHead className="hidden xl:table-cell">Mes Contrato</TableHead>
-                                    <TableHead className="hidden xl:table-cell">Frecuencia</TableHead>
-                                    <TableHead className="hidden xl:table-cell">Próx. Pago</TableHead>
-                                    <TableHead>Estado</TableHead>
-                                    <TableHead className="text-right">Acciones</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {!policies || policies.length === 0 ? (
+                    <div className="hidden md:block w-full overflow-hidden rounded-2xl border bg-white shadow-sm">
+                        <div className="overflow-x-auto w-full">
+                            <Table>
+                                <TableHeader>
                                     <TableRow>
-                                        <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
-                                            No hay pólizas registradas.
-                                        </TableCell>
+                                        <TableHead>No. Póliza</TableHead>
+                                        <TableHead>Cliente</TableHead>
+                                        <TableHead>Compañía</TableHead>
+                                        <TableHead>Ramo</TableHead>
+                                        <TableHead className="hidden xl:table-cell">Mes Contrato</TableHead>
+                                        <TableHead className="hidden xl:table-cell">Frecuencia</TableHead>
+                                        <TableHead className="hidden xl:table-cell">Próx. Pago</TableHead>
+                                        <TableHead>Estado</TableHead>
+                                        <TableHead className="text-right">Acciones</TableHead>
                                     </TableRow>
-                                ) : (
-                                    policies.map((policy: any) => (
-                                        <TableRow key={policy.id}>
-                                            <TableCell className="font-medium">
-                                                {policy.policy_number}
-                                            </TableCell>
-                                            <TableCell>
-                                                {policy.clients?.first_name} {policy.clients?.last_name}
-                                            </TableCell>
-                                            <TableCell>{policy.company || '-'}</TableCell>
-                                            <TableCell>{policy.type}</TableCell>
-                                            <TableCell className="hidden xl:table-cell">
-                                                {policy.contract_month || '-'}
-                                            </TableCell>
-                                            <TableCell className="hidden xl:table-cell">
-                                                {policy.payment_frequency || '-'}
-                                            </TableCell>
-                                            <TableCell className="hidden xl:table-cell">
-                                                {formatDate(policy.next_payment_date)}
-                                            </TableCell>
-                                            <TableCell>
-                                                <StatusBadge status={policy.status} type="policy" />
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                            <span className="sr-only">Acciones</span>
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end">
-                                                        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-                                                        <DropdownMenuItem asChild>
-                                                            <Link href={`/dashboard/policies/${policy.id}`}>
-                                                                Ver Detalles
-                                                            </Link>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem asChild>
-                                                            <Link href={`/dashboard/policies/${policy.id}/edit`}>
-                                                                Editar
-                                                            </Link>
-                                                        </DropdownMenuItem>
-                                                        <DropdownMenuItem asChild>
-                                                            <Link href={`/dashboard/policies/${policy.id}/renew`}>
-                                                                Renovar
-                                                            </Link>
-                                                        </DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
+                                </TableHeader>
+                                <TableBody>
+                                    {!policies || policies.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+                                                No hay pólizas registradas.
                                             </TableCell>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                    ) : (
+                                        policies.map((policy: any) => (
+                                            <TableRow key={policy.id}>
+                                                <TableCell className="font-medium">
+                                                    {policy.policy_number}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {policy.clients?.first_name} {policy.clients?.last_name}
+                                                </TableCell>
+                                                <TableCell>{policy.company || '-'}</TableCell>
+                                                <TableCell>{policy.type}</TableCell>
+                                                <TableCell className="hidden xl:table-cell">
+                                                    {policy.contract_month || '-'}
+                                                </TableCell>
+                                                <TableCell className="hidden xl:table-cell">
+                                                    {policy.payment_frequency || '-'}
+                                                </TableCell>
+                                                <TableCell className="hidden xl:table-cell">
+                                                    {formatDate(policy.next_payment_date)}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <StatusBadge status={policy.status} type="policy" />
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" size="icon">
+                                                                <MoreHorizontal className="h-4 w-4" />
+                                                                <span className="sr-only">Acciones</span>
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+                                                            <DropdownMenuItem asChild>
+                                                                <Link href={`/dashboard/policies/${policy.id}`}>
+                                                                    Ver Detalles
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild>
+                                                                <Link href={`/dashboard/policies/${policy.id}/edit`}>
+                                                                    Editar
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuItem asChild>
+                                                                <Link href={`/dashboard/policies/${policy.id}/renew`}>
+                                                                    Renovar
+                                                                </Link>
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </div>
                 </CardContent>
             </Card>
