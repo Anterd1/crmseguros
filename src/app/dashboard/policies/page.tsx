@@ -119,7 +119,7 @@ export default async function PoliciesPage() {
                     </div>
 
                     {/* Vista desktop con tabla */}
-                    <div className="hidden md:block overflow-x-auto">
+                    <div className="hidden md:block overflow-x-auto -mx-6 px-6 pb-2">
                         <Table>
                             <TableHeader>
                                 <TableRow>
