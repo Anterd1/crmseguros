@@ -19,7 +19,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
-import { SearchInput } from "@/components/search-input"
+import { SearchBar } from "@/components/molecules/search-bar"
 
 export default async function ClientsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -82,7 +82,7 @@ export default async function ClientsPage(props: {
                     <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <CardTitle>Cartera de Clientes</CardTitle>
                         <div className="w-full md:w-72">
-                            <SearchInput placeholder="Buscar cliente..." />
+                            <SearchBar placeholder="Buscar cliente..." paramName="search" />
                         </div>
                     </div>
                 </CardHeader>

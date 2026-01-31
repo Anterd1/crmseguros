@@ -24,7 +24,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { createClient } from "@/lib/supabase/client"
+import { createReimbursement } from "@/app/dashboard/claims/actions"
+import { formatCurrency, formatDate } from "@/lib/utils/formatters"
 
 interface Reimbursement {
     id: string
@@ -39,7 +40,6 @@ export function ReimbursementList({ claimId, initialReimbursements }: { claimId:
     const [reimbursements, setReimbursements] = useState<Reimbursement[]>(initialReimbursements)
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
-    const supabase = createClient()
 
     const [formData, setFormData] = useState({
         amount: "",
@@ -53,22 +53,24 @@ export function ReimbursementList({ claimId, initialReimbursements }: { claimId:
         setLoading(true)
 
         try {
-            const { data, error } = await supabase.from('reimbursements').insert({
-                claim_id: claimId,
+            const result = await createReimbursement(claimId, {
                 amount: parseFloat(formData.amount),
                 type: formData.type,
                 date: formData.date,
                 description: formData.description,
-                status: 'Pendiente'
-            }).select().single()
+            })
 
-            if (error) throw error
+            if (!result.success) {
+                alert(result.error || 'Error al crear el reembolso')
+                return
+            }
 
-            setReimbursements([...reimbursements, data])
+            setReimbursements([...reimbursements, result.data!])
             setOpen(false)
             setFormData({ ...formData, amount: "", description: "" })
         } catch (error) {
             console.error('Error adding reimbursement:', error)
+            alert('Error al agregar el reembolso')
         } finally {
             setLoading(false)
         }
@@ -169,10 +171,10 @@ export function ReimbursementList({ claimId, initialReimbursements }: { claimId:
                         )}
                         {reimbursements.map((item) => (
                             <TableRow key={item.id}>
-                                <TableCell>{item.date}</TableCell>
+                                <TableCell>{formatDate(item.date)}</TableCell>
                                 <TableCell>{item.type}</TableCell>
                                 <TableCell>{item.description}</TableCell>
-                                <TableCell>${item.amount.toLocaleString()}</TableCell>
+                                <TableCell>{formatCurrency(item.amount)}</TableCell>
                                 <TableCell>
                                     <Badge variant="outline">{item.status}</Badge>
                                 </TableCell>

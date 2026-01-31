@@ -6,32 +6,26 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ProspectCard } from "./prospect-card"
-import { createClient } from "@/lib/supabase/client"
+import { updateProspectStatus } from "@/app/dashboard/sales/actions"
 import { useRouter } from "next/navigation"
 import type { Prospect } from "@/types/sales"
+import { PIPELINE_STAGES } from "@/lib/constants/design"
 
 interface KanbanBoardProps {
     initialProspects: Prospect[]
 }
 
-const PIPELINE_STAGES = [
-    { id: 'Nuevo', label: 'Nuevo', color: 'bg-blue-500' },
-    { id: 'Contactado', label: 'Contactado', color: 'bg-yellow-500' },
-    { id: 'Cotización', label: 'Cotización', color: 'bg-purple-500' },
-    { id: 'Negociación', label: 'Negociación', color: 'bg-orange-500' },
-    { id: 'Ganado', label: 'Ganado', color: 'bg-green-500' },
-]
-
 export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
     const [prospects, setProspects] = useState(initialProspects)
     const [activeId, setActiveId] = useState<string | null>(null)
     const router = useRouter()
-    const supabase = createClient()
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
-                distance: 8,
+                distance: 10,
+                delay: 100,
+                tolerance: 5,
             },
         })
     )
@@ -58,17 +52,13 @@ export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
             )
         )
 
-        // Update in database
+        // Update in database via Server Action
         try {
-            const { error } = await supabase
-                .from('prospects')
-                .update({ 
-                    status: newStatus,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', prospectId)
+            const result = await updateProspectStatus(prospectId, newStatus)
 
-            if (error) throw error
+            if (!result.success) {
+                throw new Error(result.error)
+            }
 
             router.refresh()
         } catch (error) {
@@ -92,7 +82,7 @@ export function KanbanBoard({ initialProspects }: KanbanBoardProps) {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
         >
-            <div className="flex h-[550px] gap-4 overflow-x-auto overflow-y-hidden pb-4 pr-4">
+            <div className="flex h-[550px] gap-4 overflow-x-auto overflow-y-hidden pb-4 pr-4 overscroll-contain">
                 {PIPELINE_STAGES.map(stage => {
                     const stageProspects = getProspectsByStatus(stage.id)
 

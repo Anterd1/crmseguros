@@ -34,7 +34,7 @@ export function Header() {
             <div className="flex items-center gap-4">
                 <Button variant="ghost" size="icon" className="relative rounded-full h-10 w-10 bg-muted/50 hover:bg-muted">
                     <Bell className="h-5 w-5 text-muted-foreground" />
-                    <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-red-500 border-2 border-background" />
+                    <span className="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-destructive border-2 border-background" />
                     <span className="sr-only">Notificaciones</span>
                 </Button>
                 <DropdownMenu>

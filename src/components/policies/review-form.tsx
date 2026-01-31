@@ -65,7 +65,7 @@ export function ReviewForm({ initialData, fileInfo, onCancel, onSuccess }: Revie
     const [showDebug, setShowDebug] = useState(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(formSchema) as any,
         defaultValues: {
             client: {
                 type: initialData.client.type || "Física",

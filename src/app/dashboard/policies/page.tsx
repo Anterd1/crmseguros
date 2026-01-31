@@ -28,7 +28,9 @@ import {
 
 import { createClient } from "@/lib/supabase/server"
 import { ImportPolicyModal } from "@/components/policies/import-modal"
-import { SearchInput } from "@/components/search-input"
+import { SearchBar } from "@/components/molecules/search-bar"
+import { PageHeader } from "@/components/molecules/page-header"
+import { StatusBadge } from "@/components/molecules/status-badge"
 
 export default async function PoliciesPage() {
     const supabase = await createClient()
@@ -38,36 +40,33 @@ export default async function PoliciesPage() {
         .order('created_at', { ascending: false })
 
     return (
-        <div className="flex flex-col gap-6">
-            {/* Header - Responsive */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Pólizas</h2>
-                    <p className="text-sm md:text-base text-muted-foreground">
-                        Gestiona y consulta el inventario de pólizas.
-                    </p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <ImportPolicyModal />
-                    <Button variant="outline" className="flex-1 md:flex-none">
-                        <Filter className="mr-2 h-4 w-4" />
-                        <span className="hidden sm:inline">Filtros</span>
-                    </Button>
-                    <Button asChild className="flex-1 md:flex-none">
-                        <Link href="/dashboard/policies/new">
-                            <Plus className="mr-2 h-4 w-4" />
-                            <span className="hidden sm:inline">Nueva Póliza</span>
-                            <span className="sm:hidden">Nueva</span>
-                        </Link>
-                    </Button>
-                </div>
-            </div>
+        <div className="flex flex-col gap-6 w-full">
+            <PageHeader
+                title="Pólizas"
+                description="Gestiona y consulta el inventario de pólizas."
+                actions={
+                    <>
+                        <ImportPolicyModal />
+                        <Button variant="outline" className="flex-1 md:flex-none">
+                            <Filter className="mr-2 h-4 w-4" />
+                            <span className="hidden sm:inline">Filtros</span>
+                        </Button>
+                        <Button asChild className="flex-1 md:flex-none">
+                            <Link href="/dashboard/policies/new">
+                                <Plus className="mr-2 h-4 w-4" />
+                                <span className="hidden sm:inline">Nueva Póliza</span>
+                                <span className="sm:hidden">Nueva</span>
+                            </Link>
+                        </Button>
+                    </>
+                }
+            />
 
             <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <h3 className="text-lg font-semibold">Listado de Pólizas</h3>
                     <div className="w-full md:w-72">
-                        <SearchInput placeholder="Buscar por cliente, póliza..." />
+                        <SearchBar placeholder="Buscar por cliente, póliza..." />
                     </div>
                 </div>
 
@@ -86,17 +85,7 @@ export default async function PoliciesPage() {
                                         <div className="text-xs text-muted-foreground">No. Póliza</div>
                                         <div className="truncate font-semibold">{policy.policy_number}</div>
                                     </div>
-                                    <Badge
-                                        variant={
-                                            policy.status === "Activa"
-                                                ? "default"
-                                                : policy.status === "Vencida"
-                                                    ? "destructive"
-                                                    : "secondary"
-                                        }
-                                    >
-                                        {policy.status}
-                                    </Badge>
+                                    <StatusBadge status={policy.status} type="policy" />
                                 </div>
                                 <div className="mt-3 grid gap-2 text-sm">
                                     <div className="truncate">
@@ -142,8 +131,9 @@ export default async function PoliciesPage() {
                     </div>
 
                     {/* Desktop table */}
-                    <div className="hidden w-full overflow-x-auto md:block">
-                        <Table className="min-w-[720px]">
+                    <div className="hidden overflow-x-auto rounded-2xl border bg-white shadow-sm md:block">
+                        <div className="min-w-[720px]">
+                        <Table>
                             <TableHeader>
                                 <TableRow>
                                     <TableHead>No. Póliza</TableHead>
@@ -175,17 +165,7 @@ export default async function PoliciesPage() {
                                         <TableCell className="hidden xl:table-cell">{policy.payment_frequency || '-'}</TableCell>
                                         <TableCell className="hidden xl:table-cell">{policy.next_payment_date || '-'}</TableCell>
                                         <TableCell>
-                                            <Badge
-                                                variant={
-                                                    policy.status === "Activa"
-                                                        ? "default"
-                                                        : policy.status === "Vencida"
-                                                            ? "destructive"
-                                                            : "secondary"
-                                                }
-                                            >
-                                                {policy.status}
-                                            </Badge>
+                                            <StatusBadge status={policy.status} type="policy" />
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
@@ -213,6 +193,7 @@ export default async function PoliciesPage() {
                                 ))}
                             </TableBody>
                         </Table>
+                        </div>
                     </div>
                 </div>
             </div>

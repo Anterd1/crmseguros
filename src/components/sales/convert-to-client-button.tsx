@@ -2,14 +2,13 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { Loader2, UserPlus } from "lucide-react"
+import { convertProspectToClient } from "@/app/dashboard/sales/actions"
 
 export function ConvertToClientButton({ prospectId }: { prospectId: string }) {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
-    const supabase = createClient()
 
     const handleConvert = async () => {
         if (!confirm("¿Convertir este prospecto en cliente? Esto creará un registro de cliente permanente.")) {
@@ -19,50 +18,14 @@ export function ConvertToClientButton({ prospectId }: { prospectId: string }) {
         setLoading(true)
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) throw new Error("No authenticated user")
+            const result = await convertProspectToClient(prospectId)
 
-            // Get prospect data
-            const { data: prospect, error: prospectError } = await supabase
-                .from('prospects')
-                .select('*')
-                .eq('id', prospectId)
-                .single()
+            if (!result.success) {
+                alert(result.error || 'Error al convertir el prospecto')
+                return
+            }
 
-            if (prospectError) throw prospectError
-
-            // Create client from prospect
-            const { data: newClient, error: clientError } = await supabase
-                .from('clients')
-                .insert({
-                    first_name: prospect.first_name,
-                    last_name: prospect.last_name || '',
-                    email: prospect.email,
-                    phone: prospect.phone,
-                    rfc: prospect.rfc,
-                    client_type: prospect.company_name ? 'Moral' : 'Física',
-                    legal_name: prospect.company_name,
-                    user_id: user.id
-                })
-                .select('id')
-                .single()
-
-            if (clientError) throw clientError
-
-            // Update prospect as converted
-            const { error: updateError } = await supabase
-                .from('prospects')
-                .update({
-                    converted: true,
-                    converted_at: new Date().toISOString(),
-                    client_id: newClient.id,
-                    status: 'Ganado'
-                })
-                .eq('id', prospectId)
-
-            if (updateError) throw updateError
-
-            router.push(`/dashboard/clients/${newClient.id}`)
+            router.push(`/dashboard/clients/${result.clientId}`)
             router.refresh()
 
         } catch (error) {
