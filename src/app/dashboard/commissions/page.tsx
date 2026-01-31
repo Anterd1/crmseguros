@@ -11,6 +11,10 @@ import {
 } from "@/components/ui/table"
 import { DollarSign, TrendingUp, Clock, CheckCircle } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
+import { PageHeader } from "@/components/molecules/page-header"
+import { StatsCard } from "@/components/molecules/stats-card"
+import { StatusBadge } from "@/components/molecules/status-badge"
+import { formatCurrency, formatDate } from "@/lib/utils/formatters"
 
 export default async function CommissionsPage() {
     const supabase = await createClient()
@@ -27,53 +31,31 @@ export default async function CommissionsPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Comisiones</h2>
-                    <p className="text-sm md:text-base text-muted-foreground">
-                        Consulta y gestiona tus comisiones.
-                    </p>
-                </div>
-            </div>
+            <PageHeader
+                title="Comisiones"
+                description="Consulta y gestiona tus comisiones."
+            />
 
             {/* Stats Cards */}
             <div className="grid gap-4 md:grid-cols-3">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Total Comisiones</CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">${totalCommissions.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">
-                            {commissions?.length || 0} comisiones registradas
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Pendientes de Pago</CardTitle>
-                        <Clock className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-orange-600">${totalPending.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">
-                            Por cobrar
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Pagadas</CardTitle>
-                        <CheckCircle className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-green-600">${totalPaid.toLocaleString()}</div>
-                        <p className="text-xs text-muted-foreground">
-                            Cobrado
-                        </p>
-                    </CardContent>
-                </Card>
+                <StatsCard
+                    title="Total Comisiones"
+                    value={formatCurrency(totalCommissions)}
+                    subtitle={`${commissions?.length || 0} comisiones registradas`}
+                    icon={DollarSign}
+                />
+                <StatsCard
+                    title="Pendientes de Pago"
+                    value={formatCurrency(totalPending)}
+                    subtitle="Por cobrar"
+                    icon={Clock}
+                />
+                <StatsCard
+                    title="Pagadas"
+                    value={formatCurrency(totalPaid)}
+                    subtitle="Cobrado"
+                    icon={CheckCircle}
+                />
             </div>
 
             <Card>
@@ -104,16 +86,14 @@ export default async function CommissionsPage() {
                                                 {commission.policies?.clients?.first_name} {commission.policies?.clients?.last_name}
                                             </TableCell>
                                             <TableCell>{commission.policies?.type}</TableCell>
-                                            <TableCell>${commission.base_amount?.toLocaleString()}</TableCell>
+                                            <TableCell>{formatCurrency(commission.base_amount)}</TableCell>
                                             <TableCell>{commission.commission_percentage}%</TableCell>
-                                            <TableCell className="font-semibold">${commission.commission_amount?.toLocaleString()}</TableCell>
+                                            <TableCell className="font-semibold">{formatCurrency(commission.commission_amount)}</TableCell>
                                             <TableCell>
-                                                <Badge variant={commission.status === 'Pagada' ? 'default' : 'secondary'}>
-                                                    {commission.status}
-                                                </Badge>
+                                                <StatusBadge status={commission.status} type="commission" />
                                             </TableCell>
                                             <TableCell>
-                                                {commission.paid_date ? new Date(commission.paid_date).toLocaleDateString() : '-'}
+                                                {formatDate(commission.paid_date)}
                                             </TableCell>
                                         </TableRow>
                                     ))

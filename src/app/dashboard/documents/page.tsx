@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/table"
 import { FileText, Download, Calendar } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
+import { PageHeader } from "@/components/molecules/page-header"
+import { formatDate, formatFileSize } from "@/lib/utils/formatters"
 
 export default async function DocumentsPage() {
     const supabase = await createClient()
@@ -22,12 +24,10 @@ export default async function DocumentsPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            <div>
-                <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Documentos</h2>
-                <p className="text-sm md:text-base text-muted-foreground">
-                    Gestión centralizada de todos tus documentos.
-                </p>
-            </div>
+            <PageHeader
+                title="Documentos"
+                description="Gestión centralizada de todos tus documentos."
+            />
 
             <Card>
                 <CardHeader>
@@ -63,10 +63,10 @@ export default async function DocumentsPage() {
                                                 {!doc.clients && !doc.policies && '-'}
                                             </TableCell>
                                             <TableCell className="text-sm">
-                                                {doc.file_size ? `${(doc.file_size / 1024).toFixed(2)} KB` : '-'}
+                                                {formatFileSize(doc.file_size)}
                                             </TableCell>
                                             <TableCell className="text-sm">
-                                                {new Date(doc.created_at).toLocaleDateString()}
+                                                {formatDate(doc.created_at)}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <Button variant="ghost" size="sm" asChild>

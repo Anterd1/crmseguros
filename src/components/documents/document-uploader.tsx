@@ -2,11 +2,12 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { createClient } from "@/lib/supabase/client"
 import { Upload, Loader2, FileText, X } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { uploadDocument } from "@/app/dashboard/documents/actions"
+import { formatFileSize } from "@/lib/utils/formatters"
 
 interface DocumentUploaderProps {
     clientId?: string;
@@ -20,7 +21,6 @@ export function DocumentUploader({ clientId, policyId, claimId, onUploadComplete
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
     const [documentType, setDocumentType] = useState("Otro")
     const [description, setDescription] = useState("")
-    const supabase = createClient()
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -34,40 +34,20 @@ export function DocumentUploader({ clientId, policyId, claimId, onUploadComplete
         setUploading(true)
 
         try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) throw new Error("Not authenticated")
+            const formData = new FormData()
+            formData.append('file', selectedFile)
+            if (clientId) formData.append('client_id', clientId)
+            if (policyId) formData.append('policy_id', policyId)
+            if (claimId) formData.append('claim_id', claimId)
+            formData.append('document_type', documentType)
+            if (description) formData.append('description', description)
 
-            // Upload file to storage
-            const filePath = `${user.id}/${Date.now()}_${selectedFile.name}`
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('policy-documents')
-                .upload(filePath, selectedFile)
+            const result = await uploadDocument(formData)
 
-            if (uploadError) throw uploadError
-
-            // Get public URL
-            const { data: urlData } = supabase.storage
-                .from('policy-documents')
-                .getPublicUrl(filePath)
-
-            // Create document record
-            const { error: docError } = await supabase
-                .from('documents')
-                .insert({
-                    client_id: clientId,
-                    policy_id: policyId,
-                    claim_id: claimId,
-                    file_name: selectedFile.name,
-                    file_type: selectedFile.type,
-                    file_size: selectedFile.size,
-                    file_url: urlData.publicUrl,
-                    storage_path: filePath,
-                    document_type: documentType,
-                    description,
-                    uploaded_by: user.id
-                })
-
-            if (docError) throw docError
+            if (!result.success) {
+                alert(result.error || 'Error al subir el archivo')
+                return
+            }
 
             setSelectedFile(null)
             setDescription("")
@@ -126,7 +106,7 @@ export function DocumentUploader({ clientId, policyId, claimId, onUploadComplete
                         <div>
                             <p className="text-sm font-medium">{selectedFile.name}</p>
                             <p className="text-xs text-muted-foreground">
-                                {(selectedFile.size / 1024).toFixed(2)} KB
+                                {formatFileSize(selectedFile.size)}
                             </p>
                         </div>
                     </div>

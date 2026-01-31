@@ -17,6 +17,9 @@ import { Badge } from "@/components/ui/badge"
 import { AlertTriangle, Plus } from "lucide-react"
 import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
+import { PageHeader } from "@/components/molecules/page-header"
+import { StatusBadge } from "@/components/molecules/status-badge"
+import { formatDate, formatCurrency } from "@/lib/utils/formatters"
 
 export default async function ClaimsPage() {
     const supabase = await createClient()
@@ -34,22 +37,19 @@ export default async function ClaimsPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Header - Responsive */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Siniestros</h2>
-                    <p className="text-sm md:text-base text-muted-foreground">
-                        Seguimiento de incidentes y reclamaciones.
-                    </p>
-                </div>
-                <Button variant="destructive" asChild>
-                    <Link href="/dashboard/claims/new">
-                        <Plus className="mr-2 h-4 w-4" />
-                        <span className="hidden sm:inline">Reportar Siniestro</span>
-                        <span className="sm:hidden">Reportar</span>
-                    </Link>
-                </Button>
-            </div>
+            <PageHeader
+                title="Siniestros"
+                description="Seguimiento de incidentes y reclamaciones."
+                actions={
+                    <Button variant="destructive" asChild>
+                        <Link href="/dashboard/claims/new">
+                            <Plus className="mr-2 h-4 w-4" />
+                            <span className="hidden sm:inline">Reportar Siniestro</span>
+                            <span className="sm:hidden">Reportar</span>
+                        </Link>
+                    </Button>
+                }
+            />
 
             <div className="grid gap-4 md:grid-cols-3">
                 <Card className="bg-red-50 border-red-200">
@@ -95,15 +95,9 @@ export default async function ClaimsPage() {
                                     <TableRow key={claim.id}>
                                         <TableCell className="font-medium">{claim.claim_number}</TableCell>
                                         <TableCell>{claim.type}</TableCell>
-                                        <TableCell>{claim.incident_date}</TableCell>
+                                        <TableCell>{formatDate(claim.incident_date)}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className={
-                                                claim.status === 'Abierto' ? "border-red-500 text-red-600" :
-                                                    claim.status === 'En Proceso' ? "border-orange-500 text-orange-600" :
-                                                        "border-green-500 text-green-600"
-                                            }>
-                                                {claim.status}
-                                            </Badge>
+                                            <StatusBadge status={claim.status} type="claim" />
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <Button variant="ghost" size="sm">Ver Detalle</Button>

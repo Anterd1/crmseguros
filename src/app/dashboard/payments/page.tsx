@@ -16,6 +16,9 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Download, Filter } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
+import { PageHeader } from "@/components/molecules/page-header"
+import { StatusBadge } from "@/components/molecules/status-badge"
+import { formatDate, formatCurrency } from "@/lib/utils/formatters"
 
 export default async function PaymentsPage() {
     const supabase = await createClient()
@@ -39,25 +42,22 @@ export default async function PaymentsPage() {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Header - Responsive */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Cobranza</h2>
-                    <p className="text-sm md:text-base text-muted-foreground">
-                        Control de pagos y comisiones.
-                    </p>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1 md:flex-none">
-                        <Filter className="mr-2 h-4 w-4" />
-                        <span className="hidden sm:inline">Filtrar</span>
-                    </Button>
-                    <Button variant="outline" className="flex-1 md:flex-none">
-                        <Download className="mr-2 h-4 w-4" />
-                        <span className="hidden sm:inline">Exportar</span>
-                    </Button>
-                </div>
-            </div>
+            <PageHeader
+                title="Cobranza"
+                description="Control de pagos y comisiones."
+                actions={
+                    <>
+                        <Button variant="outline" className="flex-1 md:flex-none">
+                            <Filter className="mr-2 h-4 w-4" />
+                            <span className="hidden sm:inline">Filtrar</span>
+                        </Button>
+                        <Button variant="outline" className="flex-1 md:flex-none">
+                            <Download className="mr-2 h-4 w-4" />
+                            <span className="hidden sm:inline">Exportar</span>
+                        </Button>
+                    </>
+                }
+            />
 
             <Card>
                 <CardHeader>
@@ -94,21 +94,10 @@ export default async function PaymentsPage() {
                                             {payment.policies?.clients?.first_name} {payment.policies?.clients?.last_name}
                                         </TableCell>
                                         <TableCell>{payment.concept}</TableCell>
-                                        <TableCell>${payment.amount}</TableCell>
-                                        <TableCell>{payment.due_date}</TableCell>
+                                        <TableCell>{formatCurrency(payment.amount)}</TableCell>
+                                        <TableCell>{formatDate(payment.due_date)}</TableCell>
                                         <TableCell>
-                                            <Badge
-                                                variant={
-                                                    payment.status === "Pagado"
-                                                        ? "default"
-                                                        : payment.status === "Atrasado"
-                                                            ? "destructive"
-                                                            : "secondary"
-                                                }
-                                                className={payment.status === "Pagado" ? "bg-green-600 hover:bg-green-700" : ""}
-                                            >
-                                                {payment.status}
-                                            </Badge>
+                                            <StatusBadge status={payment.status} type="payment" />
                                         </TableCell>
                                     </TableRow>
                                 ))}

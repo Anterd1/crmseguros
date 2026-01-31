@@ -20,6 +20,7 @@ import { createClient } from "@/lib/supabase/server"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, CheckCircle2 } from "lucide-react"
 import { SearchBar } from "@/components/molecules/search-bar"
+import { PageHeader } from "@/components/molecules/page-header"
 
 export default async function ClientsPage(props: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -50,22 +51,19 @@ export default async function ClientsPage(props: {
 
     return (
         <div className="flex flex-col gap-6">
-            {/* Header - Responsive */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <div>
-                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Clientes</h2>
-                    <p className="text-sm md:text-base text-muted-foreground">
-                        Gestión de tu cartera de clientes.
-                    </p>
-                </div>
-                <Button asChild>
-                    <Link href="/dashboard/clients/new">
-                        <Plus className="mr-2 h-4 w-4" />
-                        <span className="hidden sm:inline">Nuevo Cliente</span>
-                        <span className="sm:hidden">Nuevo</span>
-                    </Link>
-                </Button>
-            </div>
+            <PageHeader
+                title="Clientes"
+                description="Gestión de tu cartera de clientes."
+                actions={
+                    <Button asChild>
+                        <Link href="/dashboard/clients/new">
+                            <Plus className="mr-2 h-4 w-4" />
+                            <span className="hidden sm:inline">Nuevo Cliente</span>
+                            <span className="sm:hidden">Nuevo</span>
+                        </Link>
+                    </Button>
+                }
+            />
 
             {message && (
                 <Alert className="border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
